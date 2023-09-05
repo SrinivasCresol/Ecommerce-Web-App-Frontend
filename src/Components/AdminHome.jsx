@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Outlet } from "react-router-dom";
 
 export default function AdminHome() {
   const navigate = useNavigate();
@@ -20,23 +20,24 @@ export default function AdminHome() {
   }, []);
 
   const createProduct = () => {
-    navigate('product/create')
-  }
+    navigate("product/create");
+  };
 
   const updateProduct = () => {
-    navigate('product/update')
-  }
+    navigate("product/update");
+  };
 
   return (
     <div>
       <div>
-      <h1>Hello from Admin Page</h1>
-      <button onClick={logoutAdmin}>Logout</button>
-    </div>
-    <div>
-      <button onClick={createProduct}>Create Product</button>
-      <button onClick={updateProduct}>Update Product</button>
-    </div>
+        <h1>Hello from Admin Page</h1>
+        <button onClick={logoutAdmin}>Logout</button>
+      </div>
+      <div>
+        <button onClick={createProduct}>Create Product</button>
+        <button onClick={updateProduct}>Update Product</button>
+      </div>
+      <Outlet />
     </div>
   );
 }

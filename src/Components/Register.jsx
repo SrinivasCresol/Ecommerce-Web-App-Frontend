@@ -90,6 +90,7 @@ export default function Register() {
             >
               <option value="User">User</option>
               <option value="Admin">Admin</option>
+              <option value="SuperAdmin">SuperAdmin</option>
             </select>
           </div>
           <button type="submit" className="btn">

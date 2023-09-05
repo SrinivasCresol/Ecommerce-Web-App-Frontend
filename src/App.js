@@ -1,10 +1,10 @@
 import { Route, Routes } from "react-router-dom";
-import Login from "./Pages/Login";
-import AdminHome from "./Pages/AdminHome";
-import Register from "./Pages/Register";
-import UserHome from "./Pages/UserHome";
-import ProductCreate from "./Pages/ProductCreate";
-import ProductUpdate from "./Pages/ProductUpdate";
+import Login from "./Components/Login";
+import AdminHome from "./Components/AdminHome";
+import Register from "./Components/Register";
+import UserHome from "./Components/UserHome";
+import ProductCreate from "./Components/ProductCreate";
+import ProductUpdate from "./Components/ProductUpdate";
 
 function App() {
   return (

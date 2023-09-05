@@ -61,10 +61,25 @@ export default function ProductUpdate() {
 
   const handleUpdateProduct = async (e) => {
     e.preventDefault();
+    const authToken = sessionStorage.getItem("adminToken");
+
+    if (!authToken) {
+      console.error("No authToken found.");
+      return;
+    }
+
+    const headers = {
+      Authorization: `Bearer ${authToken}`,
+      "Content-Type": "application/json",
+    };
+
     try {
       const response = await axios.put(
         `http://localhost:3333/update/product/${productId}`,
-        product
+        product,
+        {
+          headers: headers,
+        }
       );
       if (response.status === 200) {
         navigate("/admin");
