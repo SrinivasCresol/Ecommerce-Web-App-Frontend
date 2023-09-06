@@ -1,6 +1,10 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import {
+  getSubCategory,
+  productUpdateFunction,
+  singleProductGetFunction,
+} from "../Services/Apis";
 
 export default function ProductUpdate() {
   const [product, setProduct] = useState({
@@ -10,46 +14,43 @@ export default function ProductUpdate() {
     subCategoryId: "",
   });
 
+  const [image, setImage] = useState("");
+  const [newImage, setNewImage] = useState("");
   const [subcategories, setSubcategories] = useState([]);
-  const [selectedSubcategory, setSelectedSubcategory] = useState("");
 
-  const productId = useParams();
+  const { productId } = useParams();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const fetchProduct = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:3333/get/product/${productId}`
-        );
-        if (response.status === 200) {
-          const fetchedProduct = response.data;
-          setProduct({
-            model: fetchedProduct.model,
-            description: fetchedProduct.description,
-            price: fetchedProduct.price,
-            subCategoryId: fetchedProduct.subCategory._id,
-          });
-        }
-      } catch (error) {
-        console.error("Error fetching product:", error);
-      }
-    };
-
-    fetchProduct();
-    fetchSubcategories();
-  }, [productId]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setProduct({ ...product, [name]: value });
   };
 
+  const handleImage = (e) => {
+    setNewImage(e.target.files[0]);
+  };
+
+  const fetchProduct = async () => {
+    try {
+      const response = await singleProductGetFunction(productId);
+      if (response.status === 200) {
+        const fetchedProduct = response.data;
+        setImage(fetchedProduct.imageUrl);
+        setProduct({
+          model: fetchedProduct.model,
+          description: fetchedProduct.description,
+          price: fetchedProduct.price,
+          subCategoryId: fetchedProduct.subCategory._id,
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching product:", error);
+    }
+  };
+
   const fetchSubcategories = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:3333/get/subcategories"
-      );
+      const response = await getSubCategory();
 
       if (response.status === 200) {
         setSubcategories(response.data);
@@ -59,28 +60,34 @@ export default function ProductUpdate() {
     }
   };
 
+  useEffect(() => {
+    fetchProduct();
+    fetchSubcategories();
+  }, [productId]);
+
   const handleUpdateProduct = async (e) => {
     e.preventDefault();
     const authToken = sessionStorage.getItem("adminToken");
 
     if (!authToken) {
-      console.error("No authToken found.");
+      console.error("No Token Found.");
       return;
     }
 
+    const formData = new FormData();
+    formData.append("model", product.model);
+    formData.append("description", product.description);
+    formData.append("price", product.price);
+    formData.append("subCategoryId", product.subCategoryId);
+    formData.append("poster", newImage || image);
+
     const headers = {
-      Authorization: `Bearer ${authToken}`,
-      "Content-Type": "application/json",
+      Authorization: `${authToken}`,
+      "Content-Type": "multipart/form-data",
     };
 
     try {
-      const response = await axios.put(
-        `http://localhost:3333/update/product/${productId}`,
-        product,
-        {
-          headers: headers,
-        }
-      );
+      const response = await productUpdateFunction(formData, headers);
       if (response.status === 200) {
         navigate("/admin");
       }
@@ -89,15 +96,16 @@ export default function ProductUpdate() {
     }
   };
 
-  const handleSubcategorySelect = (e) => {
-    setSelectedSubcategory(e.target.value);
-    setProduct({ ...product, subCategoryId: e.target.value });
-  };
-
   return (
     <div>
       <h1>Update Product</h1>
       <form onSubmit={handleUpdateProduct}>
+        <input
+          type="file"
+          name="poster"
+          onChange={handleImage}
+          placeholder="Place Image Here"
+        />
         <input
           type="text"
           name="model"
@@ -124,13 +132,13 @@ export default function ProductUpdate() {
           <select
             name="subCategoryId"
             id="subCategoryId"
-            value={selectedSubcategory}
-            onChange={handleSubcategorySelect}
+            value={product.subCategoryId}
+            onChange={handleChange}
           >
             <option value="">Select a subcategory</option>
             {subcategories.map((subcategory) => (
               <option key={subcategory._id} value={subcategory._id}>
-                {subcategory.name}
+                {subcategory.Brand}
               </option>
             ))}
           </select>

@@ -1,6 +1,6 @@
-import axios from "axios";
 import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
+import { userRegisterFunction } from "../Services/Apis";
 
 export default function Register() {
   const [inputValue, setInputValue] = useState({
@@ -26,10 +26,7 @@ export default function Register() {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
-        "http://localhost:3333/user/register",
-        inputValue
-      );
+      const response = await userRegisterFunction(inputValue);
       if (response.status === 200) {
         navigate("/");
       }
@@ -97,7 +94,7 @@ export default function Register() {
             Sign Up
           </button>
           <p>
-            Already have an account? <NavLink to="/login">Log In</NavLink>
+            Already have an account? <NavLink to="/">Log In</NavLink>
           </p>
         </form>
       </div>

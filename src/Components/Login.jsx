@@ -1,6 +1,6 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate, NavLink } from "react-router-dom";
+import { userLoginFunction } from "../Services/Apis";
 
 export default function Login() {
   const [inputValue, setInputValue] = useState({
@@ -25,10 +25,7 @@ export default function Login() {
     e.preventDefault();
 
     try {
-      const response = await axios.post(
-        "http://localhost:3333/user/login",
-        inputValue
-      );
+      const response = await userLoginFunction(inputValue);
 
       if (response.status === 200) {
         if (response.data.result.validateUser.role === "User") {
@@ -37,6 +34,9 @@ export default function Login() {
         } else if (response.data.result.validateUser.role === "Admin") {
           sessionStorage.setItem("adminToken", response.data.result.token);
           navigate("/admin");
+        } else if (response.data.result.validateUser.role === "SuperAdmin") {
+          sessionStorage.setItem("superAdminToken", response.data.result.token);
+          navigate("/super-admin");
         }
       }
     } catch (error) {

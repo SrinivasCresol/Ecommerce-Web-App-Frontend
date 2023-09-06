@@ -1,6 +1,7 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { getProductsFunction } from "../Services/Apis";
+import { BASE_URL } from "../Services/Helper";
 
 export default function UserHome() {
   const [products, setProducts] = useState([]);
@@ -14,8 +15,7 @@ export default function UserHome() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get("http://localhost:3333/get/products");
-
+        const response = await getProductsFunction();
         if (response.status === 200) {
           setProducts(response.data);
         }
@@ -48,7 +48,10 @@ export default function UserHome() {
         <ul>
           {products.map((product) => (
             <li key={product._id}>
-              <img src={product.imageUrl} alt={product.subCategory.Brand} />
+              <img
+                src={`${BASE_URL}/uploads/${product.imageUrl}`}
+                alt={product.subCategory.Brand}
+              />
               <p>{product.model}</p>
               <p>{product.description}</p>
               <p>{product.price}</p>

@@ -1,6 +1,6 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { createProducts, getSubCategory } from "../Services/Apis";
 
 export default function ProductCreate() {
   const [product, setProduct] = useState({
@@ -10,15 +10,21 @@ export default function ProductCreate() {
     subCategoryId: "",
   });
   const [image, setImage] = useState("");
-
   const [subcategories, setSubcategories] = useState([]);
-  const [selectedSubcategory, setSelectedSubcategory] = useState("");
-
+ 
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setProduct({ ...product, [name]: value });
+    if (name === "subCategoryId") {
+      setProduct({ ...product, subCategoryId: value });
+    } else {
+      setProduct({ ...product, [name]: value });
+    }
+  };
+
+  const handleImage = (e) => {
+    setImage(e.target.files[0]);
   };
 
   const handleCreateProduct = async (e) => {
@@ -26,24 +32,26 @@ export default function ProductCreate() {
     const authToken = sessionStorage.getItem("adminToken");
 
     if (!authToken) {
-      console.error("No authToken found.");
+      console.error("No Token Found.");
       return;
     }
 
+    const formData = new FormData();
+    formData.append("model", product.model);
+    formData.append("description", product.description);
+    formData.append("price", product.price);
+    formData.append("subCategoryId", product.subCategoryId);
+    formData.append("poster", image);
+
     const headers = {
-      Authorization: `Bearer ${authToken}`,
-      "Content-Type": "application/json",
+      Authorization: `${authToken}`,
+      "Content-Type": "multipart/form-data",
     };
 
     try {
-      const response = await axios.post(
-        "http://localhost:3333/add/products",
-        product,image,
-        {
-          headers: headers,
-        }
-      );
-      if (response.status === 201) {
+      const response = await createProducts(formData, headers);
+
+      if (response.status === 200) {
         navigate("/admin");
       }
     } catch (error) {
@@ -57,9 +65,7 @@ export default function ProductCreate() {
 
   const fetchSubcategories = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:3333/get/sub-category"
-      );
+      const response = await getSubCategory();
 
       if (response.status === 200) {
         setSubcategories(response.data);
@@ -68,22 +74,16 @@ export default function ProductCreate() {
       console.error("Error fetching subcategories:", error);
     }
   };
-  console.log(subcategories)
-
-  const handleSubcategorySelect = (e) => {
-    setSelectedSubcategory(e.target.value);
-    setProduct({ ...product, subCategoryId: e.target.value });
-  };
-  
 
   return (
     <div>
       <h1>Create Product</h1>
       <form onSubmit={handleCreateProduct}>
-      <input
+        <input
           type="file"
-          name="file"
-          onChange={(e) => setImage(e.target.files[0])}
+          name="poster"
+          onChange={handleImage}
+          placeholder="Place Image Here"
         />
         <input
           type="text"
@@ -111,13 +111,13 @@ export default function ProductCreate() {
           <select
             name="subCategoryId"
             id="subCategoryId"
-            value={selectedSubcategory}
-            onChange={handleSubcategorySelect}
+            value={product.subCategoryId}
+            onChange={handleChange}
           >
             <option value="">Select a subcategory</option>
             {subcategories.map((subcategory) => (
               <option key={subcategory._id} value={subcategory._id}>
-                {subcategory.name}
+                {subcategory.Brand}
               </option>
             ))}
           </select>
