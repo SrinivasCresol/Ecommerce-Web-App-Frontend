@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getProductsFunction } from "../Services/Apis";
-import { BASE_URL } from "../Services/Helper";
 import socketIOClient from "socket.io-client";
 
-const socket = socketIOClient("http://localhost:4000");
+const socket = socketIOClient(
+  "https://react-io-socket-notifications.onrender.com"
+);
 
 export default function UserHome() {
   const [products, setProducts] = useState([]);
@@ -33,7 +34,7 @@ export default function UserHome() {
 
     fetchProducts();
   }, []);
-
+  console.log(products);
   useEffect(() => {
     const token = sessionStorage.getItem("userToken");
 
@@ -56,17 +57,16 @@ export default function UserHome() {
           {products.map((product) => (
             <li key={product._id}>
               <img
-                src={`${BASE_URL}/uploads/${product.imageUrl}`}
+                src={product.imageUrl}
                 alt={product.subCategory.Brand}
+                style={{ height: "150px" }}
               />
               <p>{product.model}</p>
               <p>{product.description}</p>
               <p>{product.price}</p>
               <button
                 onClick={() =>
-                  handleAction(
-                    `User Purchased this ${product.model} successful`
-                  )
+                  handleAction(`User Purchased ${product.model} successful`)
                 }
               >
                 Book Now

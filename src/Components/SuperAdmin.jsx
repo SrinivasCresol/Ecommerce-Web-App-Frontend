@@ -2,7 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import socketIOClient from "socket.io-client";
 
-const socket = socketIOClient("http://localhost:4000");
+const socket = socketIOClient(
+  "https://react-io-socket-notifications.onrender.com"
+);
 
 export default function SuperAdmin() {
   const [notifications, setNotifications] = useState([]);
