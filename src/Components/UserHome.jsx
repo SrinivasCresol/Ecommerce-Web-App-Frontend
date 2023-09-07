@@ -2,10 +2,17 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getProductsFunction } from "../Services/Apis";
 import { BASE_URL } from "../Services/Helper";
+import socketIOClient from "socket.io-client";
+
+const socket = socketIOClient("http://localhost:4000");
 
 export default function UserHome() {
   const [products, setProducts] = useState([]);
   const navigate = useNavigate();
+
+  const handleAction = (action) => {
+    socket.emit("userAction", action); // Emit the action to the server
+  };
 
   const logoutUser = async () => {
     sessionStorage.removeItem("userToken");
@@ -35,7 +42,7 @@ export default function UserHome() {
     } else {
       navigate("/");
     }
-  }, []);
+  }, [handleAction]);
 
   return (
     <div>
@@ -55,6 +62,15 @@ export default function UserHome() {
               <p>{product.model}</p>
               <p>{product.description}</p>
               <p>{product.price}</p>
+              <button
+                onClick={() =>
+                  handleAction(
+                    `User Purchased this ${product.model} successful`
+                  )
+                }
+              >
+                Book Now
+              </button>
             </li>
           ))}
         </ul>

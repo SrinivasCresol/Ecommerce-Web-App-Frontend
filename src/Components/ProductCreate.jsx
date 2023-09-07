@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createProducts, getSubCategory } from "../Services/Apis";
+import socketIOClient from "socket.io-client";
+
+const socket = socketIOClient("http://localhost:4000");
 
 export default function ProductCreate() {
   const [product, setProduct] = useState({
@@ -11,7 +14,7 @@ export default function ProductCreate() {
   });
   const [image, setImage] = useState("");
   const [subcategories, setSubcategories] = useState([]);
- 
+
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -21,6 +24,10 @@ export default function ProductCreate() {
     } else {
       setProduct({ ...product, [name]: value });
     }
+  };
+
+  const handleAction = (action) => {
+    socket.emit("userAction", action); // Emit the action to the server
   };
 
   const handleImage = (e) => {
@@ -59,10 +66,6 @@ export default function ProductCreate() {
     }
   };
 
-  useEffect(() => {
-    fetchSubcategories();
-  }, []);
-
   const fetchSubcategories = async () => {
     try {
       const response = await getSubCategory();
@@ -74,6 +77,10 @@ export default function ProductCreate() {
       console.error("Error fetching subcategories:", error);
     }
   };
+
+  useEffect(() => {
+    fetchSubcategories();
+  }, []);
 
   return (
     <div>
@@ -122,7 +129,12 @@ export default function ProductCreate() {
             ))}
           </select>
         </div>
-        <button type="submit">Create Product</button>
+        <button
+          type="submit"
+          onClick={() => handleAction(`${product.model} Added Successfully`)}
+        >
+          Create Product
+        </button>
       </form>
     </div>
   );
