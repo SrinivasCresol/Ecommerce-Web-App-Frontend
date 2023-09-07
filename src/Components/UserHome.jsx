@@ -1,15 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getProductsFunction } from "../Services/Apis";
-import socketIOClient from "socket.io-client";
-
-const socket = socketIOClient(
-  "https://react-io-socket-notifications.onrender.com"
-);
+import { useSocket } from "../ContextProvider/SocketProvider";
 
 export default function UserHome() {
   const [products, setProducts] = useState([]);
   const navigate = useNavigate();
+  const socket = useSocket();
 
   const handleAction = (action) => {
     socket.emit("userAction", action); // Emit the action to the server
@@ -34,7 +31,7 @@ export default function UserHome() {
 
     fetchProducts();
   }, []);
-  console.log(products);
+
   useEffect(() => {
     const token = sessionStorage.getItem("userToken");
 
@@ -63,7 +60,7 @@ export default function UserHome() {
               />
               <p>{product.model}</p>
               <p>{product.description}</p>
-              <p>{product.price}</p>
+              <p>{product.price}/-</p>
               <button
                 onClick={() =>
                   handleAction(`User Purchased ${product.model} successful`)

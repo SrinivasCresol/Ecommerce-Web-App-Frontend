@@ -1,11 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createProducts, getSubCategory } from "../Services/Apis";
-import socketIOClient from "socket.io-client";
-
-const socket = socketIOClient(
-  "https://react-io-socket-notifications.onrender.com"
-);
+import { useSocket } from "../ContextProvider/SocketProvider";
 
 export default function ProductCreate() {
   const [product, setProduct] = useState({
@@ -17,6 +13,7 @@ export default function ProductCreate() {
   const [image, setImage] = useState("");
   const [subcategories, setSubcategories] = useState([]);
 
+  const socket = useSocket();
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -26,10 +23,6 @@ export default function ProductCreate() {
     } else {
       setProduct({ ...product, [name]: value });
     }
-  };
-
-  const handleAction = (action) => {
-    socket.emit("userAction", action); // Emit the action to the server
   };
 
   const handleImage = (e) => {
@@ -62,6 +55,7 @@ export default function ProductCreate() {
 
       if (response.status === 200) {
         navigate("/admin");
+        socket.emit("adminAction", `${product.model} Added Successfully`);
       }
     } catch (error) {
       console.error("Product creation error:", error);
@@ -71,7 +65,6 @@ export default function ProductCreate() {
   const fetchSubcategories = async () => {
     try {
       const response = await getSubCategory();
-
       if (response.status === 200) {
         setSubcategories(response.data);
       }
@@ -131,12 +124,7 @@ export default function ProductCreate() {
             ))}
           </select>
         </div>
-        <button
-          type="submit"
-          onClick={() => handleAction(`${product.model} Added Successfully`)}
-        >
-          Create Product
-        </button>
+        <button type="submit">Create Product</button>
       </form>
     </div>
   );

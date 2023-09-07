@@ -1,14 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import socketIOClient from "socket.io-client";
-
-const socket = socketIOClient(
-  "https://react-io-socket-notifications.onrender.com"
-);
+import { useSocket } from "../ContextProvider/SocketProvider";
 
 export default function SuperAdmin() {
   const [notifications, setNotifications] = useState([]);
   const navigate = useNavigate();
+  const socket = useSocket();
 
   const logoutSuperAdmin = () => {
     sessionStorage.removeItem("superAdminToken");
@@ -22,7 +19,11 @@ export default function SuperAdmin() {
         notification,
       ]);
     });
-  }, []);
+
+    return () => {
+      socket.off("adminNotification");
+    };
+  }, [socket]);
 
   useEffect(() => {
     const token = sessionStorage.getItem("superAdminToken");
