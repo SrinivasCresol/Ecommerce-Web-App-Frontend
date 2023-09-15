@@ -12,6 +12,13 @@ export default function SuperAdmin() {
     navigate("/");
   };
 
+  const loadNotificationsFromStorage = () => {
+    const storedNotifications = localStorage.getItem("superAdminNotifications");
+    if (storedNotifications) {
+      setNotifications(JSON.parse(storedNotifications));
+    }
+  };
+
   useEffect(() => {
     socket.on("adminNotification", (notification) => {
       setNotifications((prevNotifications) => [
@@ -19,6 +26,8 @@ export default function SuperAdmin() {
         notification,
       ]);
     });
+
+    loadNotificationsFromStorage();
 
     return () => {
       socket.off("adminNotification");
@@ -34,6 +43,13 @@ export default function SuperAdmin() {
       navigate("/");
     }
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem(
+      "superAdminNotifications",
+      JSON.stringify(notifications)
+    );
+  }, [notifications]);
 
   return (
     <div>

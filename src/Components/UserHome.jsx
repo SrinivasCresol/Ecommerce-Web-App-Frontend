@@ -1,20 +1,37 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { getProductsFunction } from "../Services/Apis";
-import { useSocket } from "../ContextProvider/SocketProvider";
+import Cart from "./Cart";
+import Header from "./Header";
 
 export default function UserHome() {
   const [products, setProducts] = useState([]);
+  const [cartItems, setCartItems] = useState([]);
   const navigate = useNavigate();
-  const socket = useSocket();
 
-  const handleAction = (action) => {
-    socket.emit("userAction", action); // Emit the action to the server
+  const username = sessionStorage.getItem("userName");
+  const userid = sessionStorage.getItem("userId");
+
+  const addToCart = (product) => {
+    const existingItem = cartItems.find((item) => item._id === product._id);
+
+    if (existingItem) {
+      setCartItems((prevItems) =>
+        prevItems.map((item) =>
+          item._id === product._id
+            ? { ...item, quantity: item.quantity + 1, userid, username }
+            : item
+        )
+      );
+    } else {
+      setCartItems((prevItems) => [...prevItems, { ...product, quantity: 1 }]);
+    }
   };
 
-  const logoutUser = async () => {
-    sessionStorage.removeItem("userToken");
-    navigate("/");
+  const removeFromCart = (product) => {
+    setCartItems((prevItems) =>
+      prevItems.filter((item) => item._id !== product._id)
+    );
   };
 
   useEffect(() => {
@@ -40,38 +57,36 @@ export default function UserHome() {
     } else {
       navigate("/");
     }
-  }, [handleAction]);
+  }, []);
 
   return (
-    <div>
-      <div>
-        <h1>Hello From User Page</h1>
-        <button onClick={logoutUser}>Logout</button>
+    <>
+      <Header />
+      <div className="home-container">
+        <div>
+          <h2>Products List</h2>
+          <div className="products">
+            {products.map((product) => (
+              <div className="product" key={product._id}>
+                <h3>{product.model}</h3>
+                <img src={product.imageUrl} alt={product.subCategory.Brand} />
+                <div className="details">
+                  <span>{product.description}</span>
+                  <span>{product.price}/-</span>
+                </div>
+                <button onClick={() => addToCart(product)}>Add to Cart</button>
+              </div>
+            ))}
+          </div>
+        </div>
+        <Link to="/cart">Go To Cart</Link>
       </div>
-      <div>
-        <h1>Product List</h1>
-        <ul>
-          {products.map((product) => (
-            <li key={product._id}>
-              <img
-                src={product.imageUrl}
-                alt={product.subCategory.Brand}
-                style={{ height: "150px" }}
-              />
-              <p>{product.model}</p>
-              <p>{product.description}</p>
-              <p>{product.price}/-</p>
-              <button
-                onClick={() =>
-                  handleAction(`User Purchased ${product.model} successful`)
-                }
-              >
-                Book Now
-              </button>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </div>
+      <Cart
+        products={cartItems}
+        removeFromCart={removeFromCart}
+        userid={userid}
+        username={username}
+      />
+    </>
   );
 }

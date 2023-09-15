@@ -31,6 +31,14 @@ export default function Login() {
         if (response.data.result.validateUser.role === "User") {
           sessionStorage.setItem("userToken", response.data.result.token);
           navigate("/user");
+          sessionStorage.setItem(
+            "userName",
+            response.data.result.validateUser.name
+          );
+          sessionStorage.setItem(
+            "userId",
+            response.data.result.validateUser._id
+          );
         } else if (response.data.result.validateUser.role === "Admin") {
           sessionStorage.setItem("adminToken", response.data.result.token);
           navigate("/admin");
@@ -47,11 +55,14 @@ export default function Login() {
   useEffect(() => {
     const token = sessionStorage.getItem("userToken");
     const token1 = sessionStorage.getItem("adminToken");
+    const token2 = sessionStorage.getItem("superAdminToken");
 
     if (token) {
       navigate("/user");
     } else if (token1) {
       navigate("/admin");
+    } else if (token2) {
+      navigate("/super-admin");
     } else {
       navigate("/");
     }

@@ -6,6 +6,9 @@ import UserHome from "./Components/UserHome";
 import ProductCreate from "./Components/ProductCreate";
 import ProductUpdate from "./Components/ProductUpdate";
 import SuperAdmin from "./Components/SuperAdmin";
+import Cart from "./Components/Cart";
+import Success from "./Components/Success";
+import Failure from "./Components/Failure";
 
 function App() {
   return (
@@ -19,6 +22,9 @@ function App() {
         </Route>
         <Route path="/user" element={<UserHome />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/success" element={<Success />} />
+        <Route path="/cancel" element={<Failure />} />
       </Routes>
     </>
   );
