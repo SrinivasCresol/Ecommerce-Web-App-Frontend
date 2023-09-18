@@ -28,7 +28,7 @@ export default function Cart({ products, removeFromCart, userid, username }) {
       if (res.data.url || res.status === 200) {
         window.open(res.data.url, "_blank");
 
-        const notificationMessage = `User purchased the following items: ${products
+        const notificationMessage = `${username} purchased the following items: ${products
           .map((item) => item.model)
           .join(", ")}`;
         handleAction(notificationMessage);
