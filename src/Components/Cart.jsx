@@ -2,7 +2,7 @@ import React from "react";
 import { useSocket } from "../ContextProvider/SocketProvider";
 import { makePaymentFunction } from "../Services/Apis";
 
-export default function Cart({ products, removeFromCart, userid, username }) {
+export default function Cart({ products, removeFromCart }) {
   const socket = useSocket();
 
   const handleAction = (action) => {
@@ -18,12 +18,23 @@ export default function Cart({ products, removeFromCart, userid, username }) {
   };
 
   const handlePayment = async () => {
+    const userid = sessionStorage.getItem("userId");
+    const username = sessionStorage.getItem("userName");
     try {
-      const res = await makePaymentFunction(products, userid, username, {
+      const paymentData = 
+        {
+          userid,
+          username,
+          products,
+        }
+
+      const res = await makePaymentFunction(paymentData, {
         headers: {
           "Content-Type": "application/json",
         },
       });
+
+      console.log(res);
 
       if (res.data.url || res.status === 200) {
         window.open(res.data.url, "_blank");

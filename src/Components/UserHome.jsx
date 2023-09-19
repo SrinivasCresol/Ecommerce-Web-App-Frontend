@@ -9,9 +9,6 @@ export default function UserHome() {
   const [cartItems, setCartItems] = useState([]);
   const navigate = useNavigate();
 
-  const username = sessionStorage.getItem("userName");
-  const userid = sessionStorage.getItem("userId");
-
   const addToCart = (product) => {
     const existingItem = cartItems.find((item) => item._id === product._id);
 
@@ -19,7 +16,7 @@ export default function UserHome() {
       setCartItems((prevItems) =>
         prevItems.map((item) =>
           item._id === product._id
-            ? { ...item, quantity: item.quantity + 1, userid, username }
+            ? { ...item, quantity: item.quantity + 1 }
             : item
         )
       );
@@ -81,12 +78,7 @@ export default function UserHome() {
         </div>
         <Link to="/cart">Go To Cart</Link>
       </div>
-      <Cart
-        products={cartItems}
-        removeFromCart={removeFromCart}
-        userid={userid}
-        username={username}
-      />
+      <Cart products={cartItems} removeFromCart={removeFromCart} />
     </>
   );
 }
