@@ -20,7 +20,7 @@ export default function SuperAdmin() {
   };
 
   useEffect(() => {
-    socket.on("adminNotification", (notification) => {
+    socket.on("superAdminNotification", (notification) => {
       setNotifications((prevNotifications) => [
         ...prevNotifications,
         notification,
@@ -30,7 +30,7 @@ export default function SuperAdmin() {
     loadNotificationsFromStorage();
 
     return () => {
-      socket.off("adminNotification");
+      socket.off("superAdminNotification");
     };
   }, [socket]);
 
