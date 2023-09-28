@@ -21,7 +21,7 @@ export default function Cart({ products, removeFromCart }) {
     const userid = sessionStorage.getItem("userId");
     const username = sessionStorage.getItem("userName");
     try {
-      const paymentData = 
+      const paymentData =
         {
           userid,
           username,
