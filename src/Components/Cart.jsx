@@ -2,7 +2,7 @@ import React from "react";
 import { useSocket } from "../ContextProvider/SocketProvider";
 import { makePaymentFunction } from "../Services/Apis";
 
-export default function Cart({ products, removeFromCart }) {
+export default function Cart({ products = [], removeFromCart }) {
   const socket = useSocket();
 
   const handleAction = (action) => {
@@ -21,12 +21,11 @@ export default function Cart({ products, removeFromCart }) {
     const userid = sessionStorage.getItem("userId");
     const username = sessionStorage.getItem("userName");
     try {
-      const paymentData =
-        {
-          userid,
-          username,
-          products,
-        }
+      const paymentData = {
+        userid,
+        username,
+        products,
+      };
 
       const res = await makePaymentFunction(paymentData, {
         headers: {
