@@ -5,14 +5,7 @@ import App from "./App";
 import { BrowserRouter } from "react-router-dom";
 import { SocketProvider } from "./ContextProvider/SocketProvider";
 import { Provider } from "react-redux";
-import { configureStore } from "@reduxjs/toolkit";
-import ProductsReducer from "./Slices/ProductsSclice";
-
-const store = configureStore({
-  reducer: {
-    products: ProductsReducer,
-  },
-});
+import store from "./Store/store";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
