@@ -9,10 +9,13 @@ import SuperAdmin from "./Components/SuperAdmin";
 import Cart from "./Components/Cart";
 import Success from "./Components/Success";
 import Failure from "./Components/Failure";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   return (
     <>
+      <ToastContainer />
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/super-admin" element={<SuperAdmin />} />
