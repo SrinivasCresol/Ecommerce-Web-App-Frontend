@@ -20,8 +20,14 @@ export default function Cart() {
     socket.emit("userAction", action); // Emit the action to the server
   };
 
+  const userid = sessionStorage.getItem("userId");
+  const username = sessionStorage.getItem("userName");
+
   const handlePayment = () => {
     navigate("/success");
+    const purchasedItems = cart.cartItems.map((item) => item.model);
+    const notificationMessage = `${username} Purchased following items: ${purchasedItems}`;
+    handleAction(notificationMessage);
   };
 
   const handleRemoveFromCart = (cartItem) => {
@@ -39,37 +45,6 @@ export default function Cart() {
   const handleClearCart = () => {
     dispatch(clearCart());
   };
-
-  // const handlePayment = async () => {
-  //   const userid = sessionStorage.getItem("userId");
-  //   const username = sessionStorage.getItem("userName");
-  //   try {
-  //     const paymentData = {
-  //       userid,
-  //       username,
-  //       products,
-  //     };
-
-  //     const res = await makePaymentFunction(paymentData, {
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //     });
-
-  //     console.log(res);
-
-  //     if (res.data.url || res.status === 200) {
-  //       window.open(res.data.url, "_blank");
-
-  //       const notificationMessage = `${username} purchased the following items: ${products
-  //         .map((item) => item.model)
-  //         .join(", ")}`;
-  //       handleAction(notificationMessage);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error:", error);
-  //   }
-  // };
 
   return (
     <div className="cart-container">
