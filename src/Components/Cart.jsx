@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useSocket } from "../ContextProvider/SocketProvider";
 import { makePaymentFunction } from "../Services/Apis";
 import { useDispatch, useSelector } from "react-redux";
@@ -7,6 +7,7 @@ import {
   addToCart,
   clearCart,
   decreaseCart,
+  getTotals,
   removeFromCart,
 } from "../Slices/CartSlice";
 
@@ -45,6 +46,10 @@ export default function Cart() {
   const handleClearCart = () => {
     dispatch(clearCart());
   };
+
+  useEffect(() => {
+    dispatch(getTotals());
+  }, [cart, dispatch]);
 
   return (
     <div className="cart-container">

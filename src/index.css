@@ -292,6 +292,17 @@ form .btn:hover {
   text-decoration: none;
 }
 
+.bag-quantity {
+  height: 25px;
+  width: 80px;
+  border-radius: 50%;
+  background: orange;
+  font-size: 14px;
+  font-weight: 700;
+  color: black;
+  margin-left: 5px;
+}
+
 .logout-btn {
   color: #ffffff;
   background-color: #f7931e;
