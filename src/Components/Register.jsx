@@ -6,8 +6,10 @@ export default function Register() {
   const [inputValue, setInputValue] = useState({
     name: "",
     email: "",
+    phoneNumber: "",
+    address: "",
     password: "",
-    role: "",
+    role: "User",
   });
 
   const navigate = useNavigate();
@@ -62,6 +64,28 @@ export default function Register() {
               name="email"
               id="email"
               placeholder="Enter Your Email Address"
+            />
+          </div>
+          <div className="form_input">
+            <label htmlFor="name">Mobile Number</label>
+            <input
+              type="number"
+              onChange={setValue}
+              value={inputValue.phoneNumber}
+              name="phoneNumber"
+              id="phoneNumber"
+              placeholder="Enter Your Number"
+            />
+          </div>
+          <div className="form_input">
+            <label htmlFor="name">Address</label>
+            <input
+              type="text"
+              onChange={setValue}
+              value={inputValue.address}
+              name="address"
+              id="address"
+              placeholder="Enter Your Address"
             />
           </div>
           <div className="form_input">
