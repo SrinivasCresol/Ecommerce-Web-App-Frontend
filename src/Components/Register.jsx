@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { userRegisterFunction } from "../Services/Apis";
+import { useDispatch, useSelector } from "react-redux";
+import { registerUser } from "../Slices/authSlice";
 
 export default function Register() {
   const [inputValue, setInputValue] = useState({
@@ -11,7 +12,8 @@ export default function Register() {
     password: "",
     role: "User",
   });
-
+  const auth = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const setValue = (e) => {
@@ -25,15 +27,11 @@ export default function Register() {
     });
   };
 
-  const handleRegister = async (e) => {
+  const handleRegister = (e) => {
     e.preventDefault();
-    try {
-      const response = await userRegisterFunction(inputValue);
-      if (response.status === 200) {
-        navigate("/");
-      }
-    } catch (error) {
-      console.log(error);
+    dispatch(registerUser(inputValue));
+    if (auth.registerStatus === "success") {
+      navigate("/");
     }
   };
 
@@ -115,7 +113,7 @@ export default function Register() {
             </select>
           </div>
           <button type="submit" className="btn">
-            Sign Up
+            Register
           </button>
           <p>
             Already have an account? <NavLink to="/">Log In</NavLink>

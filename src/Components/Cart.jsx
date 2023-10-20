@@ -25,6 +25,7 @@ export default function Cart() {
   const username = sessionStorage.getItem("userName");
 
   const handlePayment = () => {
+    dispatch(clearCart());
     navigate("/success");
     const purchasedItems = cart.cartItems.map((item) => item.model);
     const notificationMessage = `${username} Purchased following items: ${purchasedItems}`;
